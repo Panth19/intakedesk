@@ -2,7 +2,7 @@
 
 Working-student project for **Care4trade & Nutrifill GmbH** (Griesheim / Frankfurt): merchandise management, purchasing and sales automation, n8n-style workflows, and an Odoo-like ERP draft.
 
-**Live demo:** https://intakedesk-yukj.onrender.com · **Screenshot walkthrough:** [WALKTHROUGH.md](WALKTHROUGH.md)
+**Live demo:** https://intakedesk-yukj.onrender.com · **Screenshot walkthrough:** [WALKTHROUGH.md](WALKTHROUGH.md) · **PDF:** [docs/IntakeDesk-Walkthrough.pdf](docs/IntakeDesk-Walkthrough.pdf)
 
 Customer emails and order PDFs (German and English) are extracted into structured line items. High-confidence jobs become **draft quotations in Odoo**. Uncertain jobs go to a **human review queue**. A labelled synthetic corpus replaces model fine-tuning.
 
