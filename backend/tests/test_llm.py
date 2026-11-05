@@ -53,6 +53,6 @@ def test_settings_mask_and_enable(monkeypatch):
     assert pub["configured"] is True
     assert "gsk_" in pub["api_key_masked"]
     assert "••••" in pub["api_key_masked"]
-    assert pub["model"] == "llama-3.1-8b-instant"
+    assert pub["model"] == "openai/gpt-oss-20b"
     llm_settings.api_key = ""
     llm_settings.enabled = False
