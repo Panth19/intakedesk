@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: intakedesk
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: USER_LLM_ENABLED
+        value: "true"
+      - key: USER_LLM_PROVIDER
+        value: groq
+      - key: USER_LLM_MODEL
+        value: llama-3.1-8b-instant
+      - key: USER_LLM_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: USER_LLM_API_KEY
+        sync: false

@@ -1,0 +1,120 @@
+{
+  "name": "Nutrifill IntakeDesk – order and quote intake",
+  "nodes": [
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "postProcessAction": "nothing",
+        "options": {
+          "customEmailConfig": "TRUE",
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "imap-einkauf",
+      "name": "IMAP einkauf@nutrifill",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [180, 300]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "pdf-parse",
+      "name": "Extract PDF text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [400, 420]
+    },
+    {
+      "parameters": {
+        "functionCode": "const item = items[0].json;\nconst text = item.text || item.textPlain || item.body || '';\nconst subject = item.subject || '';\nconst from = item.from || item.fromEmail || '';\nreturn [{\n  json: {\n    source: item.headers ? 'email' : 'pdf',\n    from_name: (from.split('<')[0] || '').trim(),\n    from_email: (from.match(/<([^>]+)>/) || [null, from])[1],\n    subject,\n    body: text\n  }\n}];"
+      },
+      "id": "normalize",
+      "name": "Normalize payload",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [620, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/webhook/n8n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "post-intakedesk",
+      "name": "POST IntakeDesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.extraction.needs_review }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-review",
+      "name": "Needs human review?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1060, 300]
+    },
+    {
+      "parameters": {
+        "channel": "#einkauf-review",
+        "text": "={{ 'Review ' + $json.id + ': ' + $json.subject + ' (' + ($json.extraction.review_reasons || []).join(', ') + ')' }}"
+      },
+      "id": "notify-review",
+      "name": "Notify review queue",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [1280, 200]
+    },
+    {
+      "parameters": {
+        "functionCode": "// High-confidence jobs already created an Odoo draft via IntakeDesk.\n// This node is the production hook: POST /sale.order in real Odoo.\nreturn items;"
+      },
+      "id": "odoo-hook",
+      "name": "Odoo draft already created",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1280, 400]
+    }
+  ],
+  "connections": {
+    "IMAP einkauf@nutrifill": {
+      "main": [[{ "node": "Normalize payload", "type": "main", "index": 0 }]]
+    },
+    "Extract PDF text": {
+      "main": [[{ "node": "Normalize payload", "type": "main", "index": 0 }]]
+    },
+    "Normalize payload": {
+      "main": [[{ "node": "POST IntakeDesk", "type": "main", "index": 0 }]]
+    },
+    "POST IntakeDesk": {
+      "main": [[{ "node": "Needs human review?", "type": "main", "index": 0 }]]
+    },
+    "Needs human review?": {
+      "main": [
+        [{ "node": "Notify review queue", "type": "main", "index": 0 }],
+        [{ "node": "Odoo draft already created", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "nutrifill-intakedesk-local"
+  }
+}
