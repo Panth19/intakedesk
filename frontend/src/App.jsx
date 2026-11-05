@@ -374,10 +374,10 @@ function Review({ jobs, catalog, onDone }) {
         <div>
           <h2>Review queue</h2>
           <p>Empty. All documents cleared the confidence threshold.</p>
+        </div>
       </div>
-    </>
-  );
-}
+    );
+  }
 
 function Settings({ llm, onSave }) {
   const [form, setForm] = useState({
