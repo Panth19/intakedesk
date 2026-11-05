@@ -10,7 +10,7 @@ services:
       - key: USER_LLM_PROVIDER
         value: groq
       - key: USER_LLM_MODEL
-        value: llama-3.1-8b-instant
+        value: openai/gpt-oss-20b
       - key: USER_LLM_BASE_URL
         value: https://api.groq.com/openai/v1
       - key: USER_LLM_API_KEY

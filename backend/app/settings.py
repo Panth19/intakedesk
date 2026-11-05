@@ -8,7 +8,7 @@ PROVIDERS = {
     "groq": {
         "label": "Groq (free tier, recommended)",
         "default_base_url": "https://api.groq.com/openai/v1",
-        "default_model": "llama-3.1-8b-instant",
+        "default_model": "openai/gpt-oss-20b",
         "signup": "https://console.groq.com/keys",
         "input_eur_per_m": 0.04,
         "output_eur_per_m": 0.04,

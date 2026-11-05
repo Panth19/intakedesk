@@ -28,7 +28,7 @@ Fine-tuning is intentionally **not** used. Live extraction uses a Groq/OpenAI ch
 
 - **n8n** – mailbox and PDF intake (`n8n/nutrifill_intake_workflow.json`)
 - **FastAPI** – extraction, review, Odoo simulation, evaluation
-- **Groq Llama 3.1** (or any OpenAI-compatible API) – live document extraction
+- **Groq GPT-OSS 20B** (or any OpenAI-compatible API) – live document extraction
 - **React / Vite** – ops desk (inbox, review, quotations, KPIs, AI settings)
 - **Odoo Community (simulated)** – `sale.order` drafts, tax, stock, purchase signals
 
